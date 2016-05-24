@@ -1,9 +1,8 @@
 package com.roman.zapriy.severefilemanager.content_for_list;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -16,13 +15,13 @@ public class ContentOfFileSystem {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<FileModel> ITEMS = new ArrayList<FileModel>();
+    public static final List<AbstractFileModel> ITEMS = new ArrayList<AbstractFileModel>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, FileModel> ITEM_MAP = new HashMap<String, FileModel>();
-
+   // public static final Map<String, FileModel> ITEM_MAP = new HashMap<String, FileModel>();
+/*
     private static final int COUNT = 25;
 
     static {
@@ -49,10 +48,17 @@ public class ContentOfFileSystem {
         }
         return builder.toString();
     }
+    */
+    public static List<AbstractFileModel> getItems(String path){
+        File file = new File(path);
+        if(file.isDirectory()){
+            return null;
+        }
+        return null;
+    }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
+
+ /*
     public static class FileModel {
         public final String id;
         public final String content;
@@ -68,5 +74,7 @@ public class ContentOfFileSystem {
         public String toString() {
             return content;
         }
+
     }
+    */
 }

@@ -4,24 +4,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roman.zapriy.severefilemanager.ItemFragment.OnListFragmentInteractionListener;
-import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem.FileModel;
+import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link FileModel} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHolder> {
 
-    private final List<FileModel> mValues;
+    private final List<AbstractFileModel> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public FilesRVAdapter(List<FileModel> items, OnListFragmentInteractionListener listener) {
+    public FilesRVAdapter(List<AbstractFileModel> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -36,8 +32,8 @@ public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.imView.setImageResource(mValues.get(position).getIcon());
+        holder.mContentView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,14 +54,14 @@ public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        public final ImageView imView;
         public final TextView mContentView;
-        public FileModel mItem;
+        public AbstractFileModel mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            imView = (ImageView) view.findViewById(R.id.imageFileS);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 

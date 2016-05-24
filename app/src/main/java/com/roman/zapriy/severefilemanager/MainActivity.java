@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem;
+import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 
 public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener{
 
@@ -44,12 +44,9 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
             return true;
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
     }
 
     @Override
-    public void onListFragmentInteraction(ContentOfFileSystem.FileModel item) {
+    public void onListFragmentInteraction(AbstractFileModel item) {
 
     }
 }
