@@ -7,21 +7,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.roman.zapriy.severefilemanager.ItemFragment.OnListFragmentInteractionListener;
-import com.roman.zapriy.severefilemanager.dummy.DummyContent.DummyItem;
+import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem.FileModel;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link FileModel} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
+public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<FileModel> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public FilesRVAdapter(List<FileModel> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -60,7 +60,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public FileModel mItem;
 
         public ViewHolder(View view) {
             super(view);

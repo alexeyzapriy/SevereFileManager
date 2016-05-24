@@ -10,10 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.roman.zapriy.severefilemanager.dummy.DummyContent;
-import com.roman.zapriy.severefilemanager.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem;
+import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem.FileModel;
 
 /**
  * A fragment representing a list of Items.
@@ -69,7 +67,7 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new FilesRVAdapter(ContentOfFileSystem.ITEMS, mListener));
         }
         return view;
     }
@@ -104,6 +102,6 @@ public class ItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(FileModel item);
     }
 }

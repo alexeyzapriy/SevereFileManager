@@ -5,11 +5,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.roman.zapriy.severefilemanager.dummy.DummyContent;
+import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem;
 
 public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener{
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(ContentOfFileSystem.FileModel item) {
 
     }
 }
