@@ -12,14 +12,19 @@ import android.view.ViewGroup;
 
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem;
+import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
 
-public class ItemFragment extends Fragment {
+import java.io.File;
+import java.util.ArrayList;
+
+public class ItemFragment extends Fragment implements OnListFragmentInteractionListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private FilesRVAdapter mAdapter;
 
     public ItemFragment() {
     }
@@ -57,21 +62,10 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new FilesRVAdapter(ContentOfFileSystem.ITEMS, mListener));
+            mAdapter = new FilesRVAdapter(ContentOfFileSystem.ITEMS, this);
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -80,9 +74,14 @@ public class ItemFragment extends Fragment {
         mListener = null;
     }
 
-
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(AbstractFileModel item);
+    @Override
+    public void onListFragmentInteraction(AbstractFileModel item) {
+       if (true) {  // if item is folder
+           ArrayList<AbstractFileModel> data = new ArrayList<>();
+           data.add(new FileModel(new File("/home")));
+           data.add(new FileModel(new File("/etc")));
+           mAdapter.setData(data);
+           mAdapter.notifyDataSetChanged();
+       }
     }
 }

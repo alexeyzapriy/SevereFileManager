@@ -9,9 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
-
-public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +51,5 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onListFragmentInteraction(AbstractFileModel item) {
-
     }
 }

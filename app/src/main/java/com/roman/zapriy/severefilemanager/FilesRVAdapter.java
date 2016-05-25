@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.roman.zapriy.severefilemanager.ItemFragment.OnListFragmentInteractionListener;
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 
 import java.util.List;
 
 public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHolder> {
 
-    private final List<AbstractFileModel> mValues;
+    private List<AbstractFileModel> mValues;
     private final OnListFragmentInteractionListener mListener;
 
     public FilesRVAdapter(List<AbstractFileModel> items, OnListFragmentInteractionListener listener) {
@@ -27,6 +26,11 @@ public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHold
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
         return new ViewHolder(view);
+    }
+
+    public void setData(List<AbstractFileModel> items){
+        mValues.clear();  // не обязательно, но гдето читал что сборщику мусора от этого легче
+        mValues = items;
     }
 
     @Override
