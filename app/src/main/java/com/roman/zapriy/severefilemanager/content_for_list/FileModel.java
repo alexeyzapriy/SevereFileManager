@@ -1,5 +1,7 @@
 package com.roman.zapriy.severefilemanager.content_for_list;
 
+import android.webkit.MimeTypeMap;
+
 import com.roman.zapriy.severefilemanager.R;
 
 import java.io.File;
@@ -7,11 +9,27 @@ import java.io.File;
 public class FileModel extends AbstractFileModel {
     public FileModel(File file) {
         super(file);
-        icon = R.mipmap.ic_description_black_18dp;
+        icon = R.mipmap.ic_description_black_24dp;
     }
 
     @Override
-    public void execute() {
+    public boolean isDirectory() {
+        return file.isDirectory();
+    }
 
+    public String getMime(){
+        String ext;
+        String type;
+
+        int lastdot = name.lastIndexOf(".");
+        if(lastdot > 0){
+            ext = name.substring(lastdot + 1);
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(ext);
+            if(type != null) {
+                return type;
+            }
+        }
+        return "application/octet-stream";
     }
 }

@@ -2,16 +2,16 @@ package com.roman.zapriy.severefilemanager;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
+public class MainActivity extends AppCompatActivity{
 
-public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener{
+    private FragmentManager fragMan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,19 +20,23 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        fragMan = getSupportFragmentManager();
+        fragMan.beginTransaction()
+                .replace(R.id.container, new ItemFragment())
+                .commit();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+              /*  Snackbar.make(view, "На папку выше", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+               android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
+                ((ItemFragment)fragment).upDir();
             }
         });
 
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new ItemFragment())
-                    .commit();
     }
 
     @Override
@@ -55,8 +59,4 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onListFragmentInteraction(AbstractFileModel item) {
-
-    }
 }

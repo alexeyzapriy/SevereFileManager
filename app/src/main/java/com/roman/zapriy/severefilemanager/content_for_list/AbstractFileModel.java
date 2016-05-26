@@ -12,9 +12,15 @@ public abstract class AbstractFileModel {
         this.name = file.getName();
     }
 
-    public abstract void execute();
+    public abstract boolean isDirectory();
 
     public int getIcon(){return icon;}
 
     public String getName(){return name;}
+
+    public String getAbsolutePath(){
+        return file.getAbsolutePath();
+    }
+
+    public File getFile(){return file;}
 }

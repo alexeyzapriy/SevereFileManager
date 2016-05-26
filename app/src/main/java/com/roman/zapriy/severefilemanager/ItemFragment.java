@@ -1,6 +1,9 @@
 package com.roman.zapriy.severefilemanager;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,18 +12,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
-import com.roman.zapriy.severefilemanager.content_for_list.ContentOfFileSystem;
+import com.roman.zapriy.severefilemanager.content_for_list.DirectoryModel;
+import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
 
-public class ItemFragment extends Fragment {
+import java.io.File;
+import java.util.List;
+
+public class ItemFragment extends Fragment implements OnListFragmentInteractionListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    private FilesRVAdapter mAdapter;
+    private List<AbstractFileModel> mValues;
+    private String startDir = "/storage";
+    private String currentDir;
     public ItemFragment() {
     }
 
@@ -57,22 +68,13 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new FilesRVAdapter(ContentOfFileSystem.ITEMS, mListener));
+
+            mAdapter = new FilesRVAdapter(new DirectoryModel(new File(startDir)).getListFiles(), this);
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
@@ -80,9 +82,40 @@ public class ItemFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onListFragmentInteraction(AbstractFileModel item) {
+        if (item.isDirectory()) {
+            currentDir = item.getAbsolutePath();
+            mAdapter.setData(((DirectoryModel) item).getListFiles());
+            mAdapter.notifyDataSetChanged();
+        } else {
+            Intent intent1 = new Intent();
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent1.setAction(android.content.Intent.ACTION_VIEW);
 
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(AbstractFileModel item);
+            intent1.setDataAndType(Uri.fromFile(item.getFile()), ((FileModel) item).getMime());
+
+            try {
+                startActivity(intent1);
+            } catch (ActivityNotFoundException e) {
+
+                Toast.makeText(getActivity(),
+                        getString(R.string.noOpen),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void upDir(){
+        File file = new File(currentDir);
+        if(!currentDir.equals(startDir)){
+            currentDir = file.getParent();
+        }else{
+            currentDir = startDir;
+        }
+        file = new File(currentDir);
+        DirectoryModel dm = new DirectoryModel(file);
+        mAdapter.setData(dm.getListFiles());
+        mAdapter.notifyDataSetChanged();
     }
 }
