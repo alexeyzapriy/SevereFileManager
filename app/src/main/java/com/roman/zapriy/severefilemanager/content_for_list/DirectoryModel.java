@@ -1,5 +1,7 @@
 package com.roman.zapriy.severefilemanager.content_for_list;
 
+import android.util.Log;
+
 import com.roman.zapriy.severefilemanager.R;
 
 import java.io.File;
@@ -19,7 +21,17 @@ public class DirectoryModel extends AbstractFileModel{
 
     public List<AbstractFileModel> getListFiles(){
         List<AbstractFileModel> list = new LinkedList<AbstractFileModel>();
-        for (File f : file.listFiles()) {
+        File[] files = null;
+        try {
+             files = file.listFiles();
+        } catch (Exception e) {
+            Log.e("FM", "Can not read folder " + file.getAbsolutePath());
+            e.printStackTrace();
+        }
+        if (files == null){
+            return list;
+        }
+        for (File f : files) {
             if(f.isDirectory()){
                 list.add(new DirectoryModel(f));
             }else{
