@@ -3,7 +3,7 @@ package com.roman.zapriy.severefilemanager.content_for_list;
 import com.roman.zapriy.severefilemanager.R;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DirectoryModel extends AbstractFileModel{
@@ -18,8 +18,12 @@ public class DirectoryModel extends AbstractFileModel{
     }
 
     public List<AbstractFileModel> getListFiles(){
-        List<AbstractFileModel> list = new LinkedList<AbstractFileModel>();
-        for (File f : file.listFiles()) {
+        List<AbstractFileModel> list = new ArrayList<>();
+        File[] files = file.listFiles();
+        if (files == null){
+            return list;
+        }
+        for (File f : files) {
             if(f.isDirectory()){
                 list.add(new DirectoryModel(f));
             }else{
@@ -28,6 +32,5 @@ public class DirectoryModel extends AbstractFileModel{
         }
         return list;
     }
-
 
 }
