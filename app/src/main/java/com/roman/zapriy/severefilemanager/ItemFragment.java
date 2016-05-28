@@ -21,7 +21,7 @@ import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
 import java.io.File;
 import java.util.List;
 
-public class ItemFragment extends Fragment implements OnListFragmentInteractionListener {
+public class ItemFragment extends Fragment implements OnListFragmentInteractionListener, OnLongClickListener{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -69,7 +69,7 @@ public class ItemFragment extends Fragment implements OnListFragmentInteractionL
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            mAdapter = new FilesRVAdapter(new DirectoryModel(new File(startDir)).getListFiles(), this);
+            mAdapter = new FilesRVAdapter(new DirectoryModel(new File(startDir)).getListFiles(), this, this);
             recyclerView.setAdapter(mAdapter);
         }
         return view;
@@ -117,5 +117,12 @@ public class ItemFragment extends Fragment implements OnListFragmentInteractionL
         DirectoryModel dm = new DirectoryModel(file);
         mAdapter.setData(dm.getListFiles());
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLongClick(AbstractFileModel item) {
+        Toast.makeText(getActivity(),
+                item.getName(),
+                Toast.LENGTH_SHORT).show();
     }
 }

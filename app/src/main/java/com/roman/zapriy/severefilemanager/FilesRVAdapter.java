@@ -15,10 +15,11 @@ public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHold
 
     private List<AbstractFileModel> mValues;
     private final OnListFragmentInteractionListener mListener;
-
-    public FilesRVAdapter(List<AbstractFileModel> items, OnListFragmentInteractionListener listener) {
+    private final OnLongClickListener mLongListener;
+    public FilesRVAdapter(List<AbstractFileModel> items, OnListFragmentInteractionListener listener, OnLongClickListener longClickListener) {
         mValues = items;
         mListener = listener;
+        mLongListener = longClickListener;
     }
 
     public void setData(List<AbstractFileModel> items){
@@ -47,6 +48,14 @@ public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHold
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
+            }
+        });
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mLongListener.onLongClick(holder.mItem);
+                return true;
             }
         });
     }
