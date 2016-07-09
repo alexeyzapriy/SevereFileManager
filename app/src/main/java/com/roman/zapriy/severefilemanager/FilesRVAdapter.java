@@ -1,78 +1,88 @@
 package com.roman.zapriy.severefilemanager;
 
-import android.support.v7.widget.RecyclerView;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class FilesRVAdapter extends RecyclerView.Adapter<FilesRVAdapter.ViewHolder> {
+public class FilesRVAdapter extends BaseAdapter {
 
-    private List<AbstractFileModel> mValues;
-    private final OnListFragmentInteractionListener mListener;
-    private final OnLongClickListener mLongListener;
-    public FilesRVAdapter(List<AbstractFileModel> items, OnListFragmentInteractionListener listener, OnLongClickListener longClickListener) {
-        mValues = items;
-        mListener = listener;
-        mLongListener = longClickListener;
+    private final Activity mActivity;
+    private List<AbstractFileModel> mValues = new ArrayList<>();
+
+    public FilesRVAdapter(Activity activity){
+        mActivity = activity;
     }
 
-    public void setData(List<AbstractFileModel> items){
+    public void setData(List<AbstractFileModel> items) {
         mValues.clear();  // не обязательно, но гдето читал что сборщику мусора от этого легче
         mValues = items;
-        }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
-        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.imView.setImageResource(mValues.get(position).getIcon());
-        holder.mContentView.setText(mValues.get(position).getName());
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
-
-        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mLongListener.onLongClick(holder.mItem);
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
+    public int getCount() {
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public Object getItem(int position) {
+        return mValues.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+        if(convertView==null){
+
+            // inflate the layout
+            LayoutInflater inflater = mActivity.getLayoutInflater();
+            convertView = inflater.inflate(R.layout.fragment_item, parent, false);
+
+            // well set up the ViewHolder
+            viewHolder = new ViewHolder(convertView);
+
+            // store the holder with the view.
+            convertView.setTag(viewHolder);
+
+        }else{
+            // we've just avoided calling findViewById() on resource everytime
+            // just use the viewHolder
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        AbstractFileModel objectItem = mValues.get(position);
+
+        // assign values if the object is not null
+        if(objectItem != null) {
+            // get the TextView from the ViewHolder and then set the text (item name) and tag (item ID) values
+            viewHolder.mContentView.setText(objectItem.getName());
+            viewHolder.imView.setImageResource(objectItem.getIcon());
+            viewHolder.mContentView.setTag(objectItem.getAbsolutePath());
+        }
+
+        return convertView;
+    }
+
+    public class ViewHolder {
         public final View mView;
         public final ImageView imView;
         public final TextView mContentView;
         public AbstractFileModel mItem;
 
         public ViewHolder(View view) {
-            super(view);
             mView = view;
             imView = (ImageView) view.findViewById(R.id.imageFileS);
             mContentView = (TextView) view.findViewById(R.id.content);
