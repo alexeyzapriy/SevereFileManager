@@ -1,7 +1,6 @@
 package com.roman.zapriy.severefilemanager;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,6 @@ public class FilesRVAdapter extends BaseAdapter {
             viewHolder.mContentView.setText(objectItem.getName());
             viewHolder.imView.setImageResource(objectItem.getIcon());
             viewHolder.mContentView.setTag(objectItem.getAbsolutePath());
-            viewHolder.mView.setBackgroundColor(objectItem.getIsSelected() ? Color.MAGENTA : Color.WHITE);
         }
 
         return convertView;

@@ -5,9 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -19,7 +24,7 @@ import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
 import java.io.File;
 import java.util.List;
 
-public class ItemFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class ItemFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -63,6 +68,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
             mListView = (ListView) view;
             mListView.setOnItemClickListener(this);
             mListView.setOnItemLongClickListener(this);
+            mListView.setMultiChoiceModeListener(this);
             mAdapter = new FilesRVAdapter(getActivity());
             mAdapter.setData(new DirectoryModel(new File(startDir)).getListFiles());
             mListView.setAdapter(mAdapter);
@@ -116,12 +122,52 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if(mListView.getChoiceMode() != ListView.CHOICE_MODE_MULTIPLE) {
-            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        if(mListView.getChoiceMode() != ListView.CHOICE_MODE_MULTIPLE_MODAL) {
+            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
             item.toggleIsSelected();
             mAdapter.notifyDataSetChanged();
         }
         return true;
+    }
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        final int checkedCount = mListView.getCheckedItemCount();
+        switch (checkedCount) {
+            case 0:
+                mode.setSubtitle(null);
+                break;
+            case 1:
+                mode.setSubtitle("One item selected");
+                break;
+            default:
+                mode.setSubtitle("" + checkedCount + " items selected");
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        mode.setTitle("Select Items");
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        mode.finish();
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+
     }
 }
