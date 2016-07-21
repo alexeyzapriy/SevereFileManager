@@ -9,7 +9,7 @@ import java.io.File;
 public class FileModel extends AbstractFileModel {
     public FileModel(File file) {
         super(file);
-        icon = R.mipmap.ic_description_black_24dp;
+        icon = R.mipmap.ic_insert_drive_file_white_36dp;
     }
 
     @Override
@@ -27,6 +27,7 @@ public class FileModel extends AbstractFileModel {
             MimeTypeMap mime = MimeTypeMap.getSingleton();
             type = mime.getMimeTypeFromExtension(ext);
             if(type != null) {
+                type.toLowerCase();
                 return type;
             }
         }

@@ -9,7 +9,7 @@ import java.util.List;
 public class DirectoryModel extends AbstractFileModel{
     public DirectoryModel(File file) {
         super(file);
-        icon = R.mipmap.ic_folder_black_24dp;
+        icon = R.mipmap.ic_folder_open_white_36dp;
     }
 
     @Override
@@ -18,19 +18,22 @@ public class DirectoryModel extends AbstractFileModel{
     }
 
     public List<AbstractFileModel> getListFiles(){
-        List<AbstractFileModel> list = new ArrayList<>();
+        List<AbstractFileModel> listFile = new ArrayList<>();
+        List<AbstractFileModel> listDir = new ArrayList<>();
         File[] files = file.listFiles();
         if (files == null){
-            return list;
+            return listDir;
         }
         for (File f : files) {
+
             if(f.isDirectory()){
-                list.add(new DirectoryModel(f));
+                listDir.add(new DirectoryModel(f));
             }else{
-                list.add(new FileModel(f));
+                listFile.add(new FileModel(f));
             }
         }
-        return list;
+        listDir.addAll(listFile);
+        return listDir;
     }
 
 }

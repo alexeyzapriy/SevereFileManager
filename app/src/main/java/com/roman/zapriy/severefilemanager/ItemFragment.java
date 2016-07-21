@@ -33,7 +33,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     private FilesRVAdapter mAdapter;
     private List<AbstractFileModel> mValues;
     private String startDir = "/storage";
-    private String currentDir;
+    private String currentDir = "/storage";
     private ListView mListView;
 
     public ItemFragment() {
@@ -82,6 +82,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
         if(!currentDir.equals(startDir)){
             currentDir = file.getParent();
         }else{
+
             currentDir = startDir;
         }
         file = new File(currentDir);
@@ -94,7 +95,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
         if(mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE){
-            item.toggleIsSelected();
+            //item.toggleIsSelected();
             mAdapter.notifyDataSetChanged();
         }else {
             if (item.isDirectory()) {
@@ -124,9 +125,10 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         if(mListView.getChoiceMode() != ListView.CHOICE_MODE_MULTIPLE_MODAL) {
             mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
-            item.toggleIsSelected();
-            mAdapter.notifyDataSetChanged();
+            //AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
+            //item.toggleIsSelected();
+           // mListView.setSelection(position);
+           mAdapter.notifyDataSetChanged();
         }
         return true;
     }
@@ -150,7 +152,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_for_long_click, menu);
         mode.setTitle("Select Items");
         return true;
     }

@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              /*  Snackbar.make(view, "На папку выше", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
                 ((ItemFragment)fragment).upDir();
             }
@@ -38,7 +36,6 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -48,7 +45,23 @@ public class MainActivity extends AppCompatActivity{
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_hidden) {
+
+            return true;
+        }
+        if (id == R.id.action_exit) {
+            finish();
+            return true;
+        }
+        if (id == R.id.action_info) {
+
+            return true;
+        }
+        if (id == R.id.action_new_folder) {
+
+            return true;
+        }
+        if (id == R.id.action_paste) {
 
             return true;
         }
