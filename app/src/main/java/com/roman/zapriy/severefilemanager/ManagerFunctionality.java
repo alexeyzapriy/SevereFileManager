@@ -1,6 +1,7 @@
 package com.roman.zapriy.severefilemanager;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -36,6 +37,13 @@ public class ManagerFunctionality {
 
     }
 
+    public static String getStartDir(){
+        if (Environment.getExternalStorageState() == null) {
+            return Environment.getDataDirectory().getAbsolutePath();
+        } else {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+    }
 
     public String getInfo(File f){
         StringBuilder sb = new StringBuilder();

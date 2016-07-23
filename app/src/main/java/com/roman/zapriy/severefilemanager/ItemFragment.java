@@ -32,8 +32,8 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     private int mColumnCount = 1;
     private FilesRVAdapter mAdapter;
     private List<AbstractFileModel> mValues;
-    private String startDir = "/storage";
-    private String currentDir = "/storage";
+    private String startDir = ManagerFunctionality.getStartDir();
+    private String currentDir = startDir;
     private ListView mListView;
 
     public ItemFragment() {
