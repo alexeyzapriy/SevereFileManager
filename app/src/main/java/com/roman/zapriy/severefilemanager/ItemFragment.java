@@ -82,10 +82,16 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
         if(!currentDir.equals(startDir)){
             currentDir = file.getParent();
         }else{
-
             currentDir = startDir;
         }
         file = new File(currentDir);
+        DirectoryModel dm = new DirectoryModel(file);
+        mAdapter.setData(dm.getListFiles());
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void reDraw(){
+        File file = new File(currentDir);
         DirectoryModel dm = new DirectoryModel(file);
         mAdapter.setData(dm.getListFiles());
         mAdapter.notifyDataSetChanged();
@@ -102,6 +108,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 currentDir = item.getAbsolutePath();
                 mAdapter.setData(((DirectoryModel) item).getListFiles());
                 mAdapter.notifyDataSetChanged();
+                mListView.clearChoices();
             } else {
                 Intent intent1 = new Intent();
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -172,4 +179,9 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onDestroyActionMode(ActionMode mode) {
 
     }
+
+    public String getCurrentDir(){
+        return currentDir;
+    }
+
 }

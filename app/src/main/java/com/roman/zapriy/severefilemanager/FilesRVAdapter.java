@@ -70,6 +70,7 @@ public class FilesRVAdapter extends BaseAdapter {
             viewHolder.mContentView.setText(objectItem.getName());
             viewHolder.imView.setImageResource(objectItem.getIcon());
             viewHolder.mContentView.setTag(objectItem.getAbsolutePath());
+            viewHolder.mSizeView.setText(objectItem.isDirectory() ? "" : new ManagerFunctionality(mActivity).getSize(objectItem.getFile()));
         }
 
         return convertView;
@@ -79,12 +80,14 @@ public class FilesRVAdapter extends BaseAdapter {
         public final View mView;
         public final ImageView imView;
         public final TextView mContentView;
+        public final TextView mSizeView;
         public AbstractFileModel mItem;
 
         public ViewHolder(View view) {
             mView = view;
             imView = (ImageView) view.findViewById(R.id.imageFileS);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mSizeView = (TextView) view.findViewById(R.id.size);
         }
 
         @Override
