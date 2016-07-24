@@ -1,6 +1,7 @@
 package com.roman.zapriy.severefilemanager;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -36,6 +37,13 @@ public class ManagerFunctionality {
 
     }
 
+    public static String getStartDir(){
+        if (Environment.getExternalStorageState() == null) {
+            return Environment.getDataDirectory().getAbsolutePath();
+        } else {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+    }
 
     public String getInfo(File f){
         StringBuilder sb = new StringBuilder();
@@ -85,7 +93,7 @@ public class ManagerFunctionality {
         }
         sb.append("\n");
         sb.append(context.getString(R.string.size));
-        sb.append(getSize(f));
+        sb.append(getSizeToString(getDirectoryLength(f)));
         sb.append("\n");
         sb.append(context.getString(R.string.date));
         sb.append("\n");
@@ -99,23 +107,21 @@ public class ManagerFunctionality {
         return sb.toString();
     }
 
-    public String getSize(File f){
-        long zizeFileByte = 0;
+    public String getSizeToString(long sizeFileByte){
         try {
-            zizeFileByte = getDirectoryLength(f);
-            float sizeK = zizeFileByte/1024f;
-            float sizeM = zizeFileByte/1024f/1024f;
-            float sizeG = zizeFileByte/1024f/1024f/1024f;
-            if(sizeG > 1) return sizeG + "GB";
-            else if(sizeM > 1) return sizeM + "MB";
-            else return sizeK + "KB";
+            float sizeK = sizeFileByte/1024f;
+            float sizeM = sizeFileByte/1024f/1024f;
+            float sizeG = sizeFileByte/1024f/1024f/1024f;
+            if(sizeG > 1) return String.format("%.2f", sizeG) + " GB";
+            else if(sizeM > 1) return String.format("%.2f", sizeM) + " MB";
+            else return String.format("%.0f", sizeK) + " KB";
         }
         catch (Exception e){
             return context.getString(R.string.err_);
         }
     }
 
-    private long getDirectoryLength(File f){
+    public long getDirectoryLength(File f){
         long sum = 0;
 
         Boolean isDir = false;

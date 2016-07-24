@@ -18,7 +18,7 @@ public class FilesRVAdapter extends BaseAdapter {
     private final Activity mActivity;
     private List<AbstractFileModel> mValues = new ArrayList<>();
 
-    public FilesRVAdapter(Activity activity){
+    public FilesRVAdapter(Activity activity) {
         mActivity = activity;
     }
 
@@ -45,7 +45,7 @@ public class FilesRVAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        if(convertView==null){
+        if (convertView == null) {
 
             // inflate the layout
             LayoutInflater inflater = mActivity.getLayoutInflater();
@@ -57,7 +57,7 @@ public class FilesRVAdapter extends BaseAdapter {
             // store the holder with the view.
             convertView.setTag(viewHolder);
 
-        }else{
+        } else {
             // we've just avoided calling findViewById() on resource everytime
             // just use the viewHolder
             viewHolder = (ViewHolder) convertView.getTag();
@@ -65,12 +65,12 @@ public class FilesRVAdapter extends BaseAdapter {
 
         AbstractFileModel objectItem = mValues.get(position);
 
-        // assign values if the object is not null
-        if(objectItem != null) {
+        if (objectItem != null) {
+            ManagerFunctionality managerFunctionality = new ManagerFunctionality(mActivity);
             viewHolder.mContentView.setText(objectItem.getName());
             viewHolder.imView.setImageResource(objectItem.getIcon());
             viewHolder.mContentView.setTag(objectItem.getAbsolutePath());
-            viewHolder.mSizeView.setText(objectItem.isDirectory() ? "" : new ManagerFunctionality(mActivity).getSize(objectItem.getFile()));
+            viewHolder.mSizeView.setText(objectItem.isDirectory() ? "" : managerFunctionality.getSizeToString(managerFunctionality.getDirectoryLength(objectItem.getFile())));
         }
 
         return convertView;

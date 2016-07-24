@@ -4,6 +4,8 @@
     <string name="searchM">Поиск</string>
     <string name="hiddenM">Скрытые файлы</string>
     <string name="aboutM">Информация</string>
+    <string name="aboutText">Этот менеджер настолько суров...</string>
+    <string name="sizeAll">Размер выбранных файлов: </string>
     <string name="exitM">Выход</string>
     <string name="ok">Ок</string>
     <string name="cancel">Отмена</string>

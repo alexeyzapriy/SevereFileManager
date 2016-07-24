@@ -1,10 +1,13 @@
 package com.roman.zapriy.severefilemanager;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import com.roman.zapriy.severefilemanager.content_for_list.DirectoryModel;
 import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener {
@@ -32,8 +36,9 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     private int mColumnCount = 1;
     private FilesRVAdapter mAdapter;
     private List<AbstractFileModel> mValues;
+    //private String startDir = ManagerFunctionality.getStartDir();
     private String startDir = "/storage";
-    private String currentDir = "/storage";
+    private String currentDir = startDir;
     private ListView mListView;
 
     public ItemFragment() {
@@ -70,7 +75,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
             mListView.setOnItemLongClickListener(this);
             mListView.setMultiChoiceModeListener(this);
             mAdapter = new FilesRVAdapter(getActivity());
-            mAdapter.setData(new DirectoryModel(new File(startDir)).getListFiles());
+            mAdapter.setData(new DirectoryModel(new File(startDir)).getListFiles(getActivity()));
             mListView.setAdapter(mAdapter);
         }
         return view;
@@ -86,14 +91,14 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
         }
         file = new File(currentDir);
         DirectoryModel dm = new DirectoryModel(file);
-        mAdapter.setData(dm.getListFiles());
+        mAdapter.setData(dm.getListFiles(getActivity()));
         mAdapter.notifyDataSetChanged();
     }
 
     public void reDraw(){
         File file = new File(currentDir);
         DirectoryModel dm = new DirectoryModel(file);
-        mAdapter.setData(dm.getListFiles());
+        mAdapter.setData(dm.getListFiles(getActivity()));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -106,7 +111,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
         }else {
             if (item.isDirectory()) {
                 currentDir = item.getAbsolutePath();
-                mAdapter.setData(((DirectoryModel) item).getListFiles());
+                mAdapter.setData(((DirectoryModel) item).getListFiles(getActivity()));
                 mAdapter.notifyDataSetChanged();
                 mListView.clearChoices();
             } else {
@@ -171,8 +176,60 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        mode.finish();
-        return false;
+        ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
+        switch (item.getItemId()) {
+            case R.id.aboutId:
+                StringBuilder sb = new StringBuilder();
+
+                if(mListView.getCheckedItemCount() == 1){
+                    SparseBooleanArray arr = mListView.getCheckedItemPositions();
+                    AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(0));
+                    sb.append(managerFunctionality.getInfo(model.getFile()));
+                }else{
+                    sb.append(getString(R.string.sizeAll));
+                    long size = 0;
+                    SparseBooleanArray arr = mListView.getCheckedItemPositions();
+                    for (int i = 0; i < arr.size(); i++) {
+                        if (arr.valueAt(i)) {
+                            AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
+                            size+=managerFunctionality.getDirectoryLength(model.getFile());
+                        }
+                    }
+                    sb.append(" ");
+                    sb.append(managerFunctionality.getSizeToString(size));
+                }
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.aboutM)
+                        .setMessage(sb)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                })
+                        .show();
+                mode.finish();
+                return true;
+            case R.id.copyId:
+                mode.finish();
+                return true;
+            case R.id.cutId:
+                mode.finish();
+                return true;
+            case R.id.deleteId:
+                mode.finish();
+                return true;
+            case R.id.renameId:
+                mode.finish();
+                return true;
+            case R.id.cancelId:
+                mode.finish();
+                return true;
+            default:
+                mode.finish();
+                return true;
+        }
     }
 
     @Override

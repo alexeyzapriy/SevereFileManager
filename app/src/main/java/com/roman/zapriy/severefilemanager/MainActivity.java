@@ -2,6 +2,7 @@ package com.roman.zapriy.severefilemanager;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -15,10 +16,12 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragMan;
     private Activity activity;
+    private Boolean isShowHidden = false;
+    private SharedPreferences mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +37,18 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
-                ((ItemFragment)fragment).upDir();
+                android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
+                ((ItemFragment) fragment).upDir();
             }
         });
 
         activity = this;
+
+        mSettings = getSharedPreferences("ManagerPrefsFile", 0);
+
+        if (mSettings.contains("hidden")) {
+            isShowHidden = mSettings.getBoolean("hidden", false);
+        }
     }
 
     @Override
@@ -54,11 +63,12 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         final android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
-        String currDir = ((ItemFragment)fragment).getCurrentDir();
+        String currDir = ((ItemFragment) fragment).getCurrentDir();
         final File f = new File(currDir);
 
         if (id == R.id.action_hidden) {
-
+            toggleHidden();
+            ((ItemFragment) fragment).reDraw();
             return true;
         }
         if (id == R.id.action_exit) {
@@ -66,6 +76,18 @@ public class MainActivity extends AppCompatActivity{
             return true;
         }
         if (id == R.id.action_info) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.aboutM)
+                    .setMessage(R.string.aboutText)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            })
+                    .show();
 
             return true;
         }
@@ -85,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
                                     R.string.noCrFold,
                                     Toast.LENGTH_SHORT).show();
                         }
-                        ((ItemFragment)fragment).reDraw();
+                        ((ItemFragment) fragment).reDraw();
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 R.string.noName,
@@ -116,15 +138,23 @@ public class MainActivity extends AppCompatActivity{
 
 
     private boolean isTrueName(String value, File f) {
-        if(f.isFile()) f = f.getParentFile();
-        String [] names = f.list();
-        for (String s : names){
-            if(s.equals(value)) {
+        if (f.isFile()) f = f.getParentFile();
+        String[] names = f.list();
+        for (String s : names) {
+            if (s.equals(value)) {
                 return false;
             }
         }
 
-        return  true;
+        return true;
+    }
+
+    private void toggleHidden() {
+        isShowHidden = !isShowHidden;
+
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putBoolean("hidden", isShowHidden);
+        editor.apply();
     }
 
 }
