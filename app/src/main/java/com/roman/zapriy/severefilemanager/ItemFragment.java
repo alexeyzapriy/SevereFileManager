@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -89,10 +90,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
         }else{
             currentDir = startDir;
         }
-        file = new File(currentDir);
-        DirectoryModel dm = new DirectoryModel(file);
-        mAdapter.setData(dm.getListFiles(getActivity()));
-        mAdapter.notifyDataSetChanged();
+      reDraw();
     }
 
     public void reDraw(){
@@ -115,11 +113,12 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 mAdapter.notifyDataSetChanged();
                 mListView.clearChoices();
             } else {
+                ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
                 Intent intent1 = new Intent();
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent1.setAction(android.content.Intent.ACTION_VIEW);
 
-                intent1.setDataAndType(Uri.fromFile(item.getFile()), ((FileModel) item).getMime());
+                intent1.setDataAndType(Uri.fromFile(item.getFile()), managerFunctionality.getMime(item.getFile()));
 
                 try {
                     startActivity(intent1);
@@ -176,38 +175,37 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
+        final ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
+        SparseBooleanArray arr = mListView.getCheckedItemPositions();
         switch (item.getItemId()) {
             case R.id.aboutId:
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sbI = new StringBuilder();
 
                 if(mListView.getCheckedItemCount() == 1){
-                    SparseBooleanArray arr = mListView.getCheckedItemPositions();
                     AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(0));
-                    sb.append(managerFunctionality.getInfo(model.getFile()));
+                    sbI.append(managerFunctionality.getInfo(model.getFile()));
                 }else{
-                    sb.append(getString(R.string.sizeAll));
+                    sbI.append(getString(R.string.sizeAll));
                     long size = 0;
-                    SparseBooleanArray arr = mListView.getCheckedItemPositions();
                     for (int i = 0; i < arr.size(); i++) {
                         if (arr.valueAt(i)) {
                             AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
                             size+=managerFunctionality.getDirectoryLength(model.getFile());
                         }
                     }
-                    sb.append(" ");
-                    sb.append(managerFunctionality.getSizeToString(size));
+                    sbI.append(" ");
+                    sbI.append(managerFunctionality.getSizeToString(size));
                 }
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.aboutM)
-                        .setMessage(sb)
+                        .setMessage(sbI)
                         .setCancelable(false)
-                        .setPositiveButton(R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                })
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
                         .show();
                 mode.finish();
                 return true;
@@ -218,9 +216,68 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 mode.finish();
                 return true;
             case R.id.deleteId:
+              /*  StringBuilder sbD = new StringBuilder();
+                sbD.append(getString(R.string.isDelete));
+                sbD.append(" ");
+                sbD.append(getString(R.string.chItems));
+                sbD.append("?");
+              */
+                for (int i = 0; i < arr.size(); i++) {
+                    if (arr.valueAt(i)) {
+                        AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
+                        managerFunctionality.delDirectory(model.getFile());
+                    }
+                }
+                reDraw();
                 mode.finish();
+
                 return true;
             case R.id.renameId:
+                if(mListView.getCheckedItemCount() == 1){
+                    final AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(0));
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle(R.string.rename);
+                    final EditText input = new EditText(getActivity());
+                    input.setText(model.getName());
+                    alert.setView(input);
+
+                    alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String value = input.getText().toString();
+                            if (managerFunctionality.isTrueName(value, model.getFile())) {
+
+                                if (!managerFunctionality.rename(model.getFile(), value)) {
+                                    Toast.makeText(getActivity(),
+                                            R.string.noRename,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                reDraw();
+                            } else {
+                                Toast.makeText(getActivity(),
+                                        R.string.noName,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                    alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    });
+
+                    alert.show();
+                }else{
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.aboutM)
+                            .setMessage(R.string.singleFile)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .show();
+                }
                 mode.finish();
                 return true;
             case R.id.cancelId:

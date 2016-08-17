@@ -16,21 +16,4 @@ public class FileModel extends AbstractFileModel {
     public boolean isDirectory() {
         return file.isDirectory();
     }
-
-    public String getMime(){
-        String ext;
-        String type;
-
-        int lastdot = name.lastIndexOf(".");
-        if(lastdot > 0){
-            ext = name.substring(lastdot + 1);
-            MimeTypeMap mime = MimeTypeMap.getSingleton();
-            type = mime.getMimeTypeFromExtension(ext);
-            if(type != null) {
-                type.toLowerCase();
-                return type;
-            }
-        }
-        return "application/octet-stream";
-    }
 }

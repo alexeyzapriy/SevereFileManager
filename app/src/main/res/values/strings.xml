@@ -28,15 +28,18 @@
     <string name="noCrFold">Не удалось создать папку</string>
     <string name="noName">Имя не подходит</string>
     <string name="showHidFile">Показывать скрытые файлы?</string>
-    <string name="type">тип: </string>
+    <string name="type">тип:</string>
     <string name="file">Файл</string>
-    <string name="folder">Папка </string>
+    <string name="folder">Папка</string>
     <string name="err_">Ошибка при определении</string>
     <string name="absolutPath">Абсолютный путь</string>
-    <string name="isRead">доступно для чтения: </string>
-    <string name="isWrite">доступно для записи: </string>
-    <string name="isHidden">скрытый: </string>
-    <string name="size">размер: </string>
+    <string name="isRead">доступно для чтения:</string>
+    <string name="isWrite">доступно для записи:</string>
+    <string name="isHidden">скрытый:</string>
+    <string name="size">размер:</string>
     <string name="date">дата последней модификации: </string>
     <string name="noWrite">не доступно для чтения.</string>
+    <string name="chItems">выделенные объекты</string>
+    <string name="singleFile">Нужно выбрать один файл или папку для переименования.</string>
+    <string name="noRename">Не удалось переименовать.</string>
 </resources>

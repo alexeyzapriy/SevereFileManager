@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        final ManagerFunctionality managerFunc = new ManagerFunctionality(this);
         int id = item.getItemId();
 
         final android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
@@ -100,9 +100,8 @@ public class MainActivity extends AppCompatActivity {
             alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String value = input.getText().toString();
-                    if (isTrueName(value, f)) {
-                        ManagerFunctionality fm = new ManagerFunctionality(activity);
-                        if (!fm.newFolder(f, value)) {
+                    if (managerFunc.isTrueName(value, f)) {
+                        if (!managerFunc.newFolder(f, value)) {
                             Toast.makeText(getApplicationContext(),
                                     R.string.noCrFold,
                                     Toast.LENGTH_SHORT).show();
@@ -134,19 +133,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    private boolean isTrueName(String value, File f) {
-        if (f.isFile()) f = f.getParentFile();
-        String[] names = f.list();
-        for (String s : names) {
-            if (s.equals(value)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private void toggleHidden() {
