@@ -42,4 +42,9 @@
     <string name="chItems">выделенные объекты</string>
     <string name="singleFile">Нужно выбрать один файл или папку для переименования.</string>
     <string name="noRename">Не удалось переименовать.</string>
+    <string name="copying">Копирование...</string>
+    <string name="copyCompleted">Копирование завершено.</string>
+    <string name="nothing">Ничего не сработало</string>
+    <string name="deletion">Удаление...</string>
+    <string name="delErr">Удаление прошло с ошибками.</string>
 </resources>

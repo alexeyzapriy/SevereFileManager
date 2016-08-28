@@ -1,6 +1,5 @@
 package com.roman.zapriy.severefilemanager;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,15 +13,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.File;
+import com.google.gson.Gson;
+import com.roman.zapriy.severefilemanager.functionality.ATCopyCallBack;
+import com.roman.zapriy.severefilemanager.functionality.Copy;
+import com.roman.zapriy.severefilemanager.functionality.Delete;
+import com.roman.zapriy.severefilemanager.functionality.ManagerFunctionality;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements ATCopyCallBack {
 
     private FragmentManager fragMan;
-    private Activity activity;
     private Boolean isShowHidden = false;
     private SharedPreferences mSettings;
-
+    private String type = "";
+    private MyArr myArr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
                 ((ItemFragment) fragment).upDir();
             }
         });
-
-        activity = this;
 
         mSettings = getSharedPreferences("ManagerPrefsFile", 0);
 
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_hidden) {
             toggleHidden();
-            ((ItemFragment) fragment).reDraw();
+            redraw();
             return true;
         }
         if (id == R.id.action_exit) {
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                                     R.string.noCrFold,
                                     Toast.LENGTH_SHORT).show();
                         }
-                        ((ItemFragment) fragment).reDraw();
+                        redraw();
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 R.string.noName,
@@ -129,10 +133,35 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.action_paste) {
 
+            String pathListStr = "";
+            if (mSettings.contains("Copied files")) {
+                pathListStr = mSettings.getString("Copied files", "");
+            }
+
+            if (mSettings.contains("Type")) {
+                type = mSettings.getString("Type", "");
+            }
+            myArr = new Gson().fromJson(pathListStr, MyArr.class);
+
+            ArrayList<String> arrPath = new ArrayList<>();
+            arrPath.add(currDir);
+            arrPath.addAll(myArr.arr);
+            Copy copy = new Copy(this);
+            copy.execute(arrPath);
+
+            SharedPreferences.Editor editor = mSettings.edit();
+            editor.putString("Type", "");
+            editor.apply();
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void redraw() {
+        android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
+        ((ItemFragment) fragment).reDraw();
     }
 
     private void toggleHidden() {
@@ -143,4 +172,22 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    @Override
+    public void onTaskComplete(String result) {
+        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+        switch (type){
+            case "Copy":
+                redraw();
+                break;
+            case "Cut":
+                Delete delete = new Delete(this);
+                ArrayList<String> arrayList = new ArrayList<>();
+                arrayList.addAll(myArr.arr);
+                delete.execute(arrayList);
+                break;
+            default:
+                redraw();
+                break;
+        }
+    }
 }

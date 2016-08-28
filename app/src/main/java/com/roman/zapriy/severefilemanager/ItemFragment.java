@@ -3,6 +3,7 @@ package com.roman.zapriy.severefilemanager;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,9 +22,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
 import com.roman.zapriy.severefilemanager.content_for_list.DirectoryModel;
-import com.roman.zapriy.severefilemanager.content_for_list.FileModel;
+import com.roman.zapriy.severefilemanager.functionality.Delete;
+import com.roman.zapriy.severefilemanager.functionality.ManagerFunctionality;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     private String startDir = "/storage";
     private String currentDir = startDir;
     private ListView mListView;
+    private SharedPreferences mSettings;
 
     public ItemFragment() {
     }
@@ -68,7 +72,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-
+        mSettings = getActivity().getSharedPreferences("ManagerPrefsFile", 0);
         // Set the adapter
         if (view instanceof ListView) {
             mListView = (ListView) view;
@@ -104,7 +108,6 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
         if(mListView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE){
-            //item.toggleIsSelected();
             mAdapter.notifyDataSetChanged();
         }else {
             if (item.isDirectory()) {
@@ -136,9 +139,6 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         if(mListView.getChoiceMode() != ListView.CHOICE_MODE_MULTIPLE_MODAL) {
             mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            //AbstractFileModel item = (AbstractFileModel) mListView.getItemAtPosition(position);
-            //item.toggleIsSelected();
-           // mListView.setSelection(position);
            mAdapter.notifyDataSetChanged();
         }
         return true;
@@ -175,6 +175,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
         final ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
         SparseBooleanArray arr = mListView.getCheckedItemPositions();
         switch (item.getItemId()) {
@@ -210,9 +211,14 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 mode.finish();
                 return true;
             case R.id.copyId:
+                saveType("Copy");
+
+                saveCopiedFiles(arr);
                 mode.finish();
                 return true;
             case R.id.cutId:
+                saveType("Cut");
+                saveCopiedFiles(arr);
                 mode.finish();
                 return true;
             case R.id.deleteId:
@@ -222,13 +228,15 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 sbD.append(getString(R.string.chItems));
                 sbD.append("?");
               */
+                Delete delete = new Delete(getActivity());
+                ArrayList<String> arrayList = new ArrayList<>();
                 for (int i = 0; i < arr.size(); i++) {
                     if (arr.valueAt(i)) {
                         AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
-                        managerFunctionality.delDirectory(model.getFile());
+                        arrayList.add(model.getAbsolutePath());
                     }
                 }
-                reDraw();
+                delete.execute(arrayList);
                 mode.finish();
 
                 return true;
@@ -287,6 +295,29 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 mode.finish();
                 return true;
         }
+    }
+
+    private void saveType(String type) {
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putString("Type", type);
+        editor.apply();
+    }
+
+    private void saveCopiedFiles(SparseBooleanArray arr) {
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr.valueAt(i)) {
+                AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
+                arrayList.add(model.getFile().getAbsolutePath());
+            }
+        }
+        MyArr ma = new MyArr();
+        ma.arr = arrayList;
+        String jsonStr = new Gson().toJson(ma);
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putString("Copied files", jsonStr);
+        editor.apply();
     }
 
     @Override

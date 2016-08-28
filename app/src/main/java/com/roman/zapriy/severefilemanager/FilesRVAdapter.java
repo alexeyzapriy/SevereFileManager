@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roman.zapriy.severefilemanager.content_for_list.AbstractFileModel;
+import com.roman.zapriy.severefilemanager.functionality.ManagerFunctionality;
 
 import java.util.ArrayList;
 import java.util.List;

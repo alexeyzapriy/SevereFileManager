@@ -1,29 +1,19 @@
-package com.roman.zapriy.severefilemanager;
+package com.roman.zapriy.severefilemanager.functionality;
 
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.roman.zapriy.severefilemanager.R;
 import java.io.File;
 import java.util.Date;
 
 public class ManagerFunctionality {
-
-    private static final int BUFFER = 2048;
     private Context context;
 
     public ManagerFunctionality(Context c) {
         context = c;
-    }
-
-    public void delDirectory(File f) {
-        if (f.isDirectory()) {
-            File[] arrPath = f.listFiles();
-            for (File file : arrPath)
-                delDirectory(file);
-            f.delete();
-        } else f.delete();
     }
 
     public Boolean newFolder(File target, String name) {
@@ -193,4 +183,5 @@ public class ManagerFunctionality {
 
         return "application/octet-stream";
     }
+
 }
