@@ -1,11 +1,12 @@
 package com.roman.zapriy.severefilemanager.functionality;
 
 import android.content.Context;
-import android.os.Environment;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.roman.zapriy.severefilemanager.R;
+
 import java.io.File;
 import java.util.Date;
 
@@ -27,12 +28,18 @@ public class ManagerFunctionality {
 
     }
 
-    public static String getStartDir() {
-        if (Environment.getExternalStorageState() == null) {
-            return Environment.getDataDirectory().getAbsolutePath();
-        } else {
-            return Environment.getExternalStorageDirectory().getAbsolutePath();
+    public String getStartDir() {
+        SharedPreferences mSettings = context.getSharedPreferences("ManagerPrefsFile", 0);
+        String startDir = "/storage";
+        if (mSettings.contains("startRoot")) {
+            Boolean startIsRoot = mSettings.getBoolean("startRoot", false);
+            if (startIsRoot) {
+                startDir = "/";
+            } else {
+                startDir = "/storage";
+            }
         }
+        return startDir;
     }
 
     public String getInfo(File f) {

@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements ATCopyCallBack {
 
     private FragmentManager fragMan;
     private Boolean isShowHidden = false;
+    private Boolean startIsRoot = false;
     private SharedPreferences mSettings;
     private String type = "";
     private MyArr myArr;
@@ -40,18 +40,19 @@ public class MainActivity extends AppCompatActivity implements ATCopyCallBack {
                 .commit();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
-                ((ItemFragment) fragment).upDir();
-            }
+        fab.setOnClickListener(view -> {
+            android.support.v4.app.Fragment fragment = fragMan.getFragments().get(0);
+            ((ItemFragment) fragment).upDir();
         });
 
         mSettings = getSharedPreferences("ManagerPrefsFile", 0);
 
         if (mSettings.contains("hidden")) {
             isShowHidden = mSettings.getBoolean("hidden", false);
+        }
+
+        if (mSettings.contains("startRoot")) {
+            startIsRoot = mSettings.getBoolean("startRoot", false);
         }
     }
 
@@ -72,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements ATCopyCallBack {
 
         if (id == R.id.action_hidden) {
             toggleHidden();
+            redraw();
+            return true;
+        }
+        if (id == R.id.action_isRoot) {
+            toggleStartDir();
             redraw();
             return true;
         }
@@ -169,6 +175,14 @@ public class MainActivity extends AppCompatActivity implements ATCopyCallBack {
 
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putBoolean("hidden", isShowHidden);
+        editor.apply();
+    }
+
+    private void toggleStartDir() {
+        startIsRoot = !startIsRoot;
+
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putBoolean("startRoot", startIsRoot);
         editor.apply();
     }
 

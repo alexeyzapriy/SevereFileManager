@@ -3,45 +3,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.roman.zapriy.severefilemanager.MainActivity">
     <item
-        android:id="@+id/action_search"
-        android:icon="@mipmap/ic_search_white_36dp"
-        android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/searchM">
-    </item>
-    <item
         android:id="@+id/action_hidden"
         android:icon="@mipmap/ic_visibility_off_white_36dp"
         android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/hiddenM">
-    </item>
-    <item
-        android:id="@+id/action_info"
-        android:icon="@mipmap/ic_info_outline_white_36dp"
-        android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/aboutM">
-    </item>
+        android:title="@string/hiddenM"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <group android:id="@+id/group">
     <item
         android:id="@+id/action_new_folder"
         android:icon="@mipmap/ic_create_new_folder_white_36dp"
-        android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/newF">
-    </item>
+        android:orderInCategory="103"
+        android:title="@string/newF"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_paste"
         android:icon="@mipmap/ic_content_paste_white_36dp"
-        android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/paste">
-    </item>
+        android:orderInCategory="104"
+        android:title="@string/paste"
+        app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/action_info"
+            android:icon="@mipmap/ic_info_outline_white_36dp"
+            android:orderInCategory="105"
+            android:title="@string/aboutM"
+            app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_search"
+        android:icon="@mipmap/ic_search_white_36dp"
+        android:orderInCategory="106"
+        android:title="@string/searchM"
+        app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/action_isRoot"
+            android:checkable="false"
+            android:orderInCategory="107"
+            android:title="@string/isRoot"
+            app:showAsAction="ifRoom" />
+        <item
         android:id="@+id/action_exit"
         android:icon="@mipmap/ic_directions_run_white_36dp"
-        android:orderInCategory="102"
-        app:showAsAction="ifRoom"
-        android:title="@string/exitM">
-    </item>
+            android:orderInCategory="108"
+            android:title="@string/exitM"
+            app:showAsAction="ifRoom" />
+    </group>
 </menu>

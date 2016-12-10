@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -40,12 +41,11 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     private int mColumnCount = 1;
     private FilesRVAdapter mAdapter;
     private List<AbstractFileModel> mValues;
-    //private String startDir = ManagerFunctionality.getStartDir();
-    private String startDir = "/storage";
-    private String currentDir = startDir;
+    private String startDir;
+    private String currentDir;
     private ListView mListView;
     private SharedPreferences mSettings;
-
+    private ManagerFunctionality mfunction;
     public ItemFragment() {
     }
 
@@ -73,7 +73,10 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         mSettings = getActivity().getSharedPreferences("ManagerPrefsFile", 0);
-        // Set the adapter
+        mfunction = new ManagerFunctionality(getActivity());
+        startDir = mfunction.getStartDir();
+        currentDir = startDir;
+
         if (view instanceof ListView) {
             mListView = (ListView) view;
             mListView.setOnItemClickListener(this);
@@ -88,6 +91,13 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     public void upDir(){
         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        if (!startDir.equals("/")) {
+            if (!isPart(startDir, currentDir)) {
+                currentDir = startDir;
+            }
+        }
+
         File file = new File(currentDir);
         if(!currentDir.equals(startDir)){
             currentDir = file.getParent();
@@ -98,6 +108,8 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     public void reDraw(){
+        startDir = mfunction.getStartDir();
+
         File file = new File(currentDir);
         DirectoryModel dm = new DirectoryModel(file);
         mAdapter.setData(dm.getListFiles(getActivity()));
@@ -116,17 +128,18 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 mAdapter.notifyDataSetChanged();
                 mListView.clearChoices();
             } else {
-                ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
+                ;
                 Intent intent1 = new Intent();
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent1.setAction(android.content.Intent.ACTION_VIEW);
 
-                intent1.setDataAndType(Uri.fromFile(item.getFile()), managerFunctionality.getMime(item.getFile()));
+                String mime = mfunction.getMime(item.getFile());
+                intent1.setDataAndType(Uri.fromFile(item.getFile()), "video/*");
 
                 try {
                     startActivity(intent1);
                 } catch (ActivityNotFoundException e) {
-
+                    Log.e("Open file", e.getMessage());
                     Toast.makeText(getActivity(),
                             getString(R.string.noOpen),
                             Toast.LENGTH_SHORT).show();
@@ -176,7 +189,6 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-        final ManagerFunctionality managerFunctionality = new ManagerFunctionality(getActivity());
         SparseBooleanArray arr = mListView.getCheckedItemPositions();
         switch (item.getItemId()) {
             case R.id.aboutId:
@@ -184,18 +196,18 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
                 if(mListView.getCheckedItemCount() == 1){
                     AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(0));
-                    sbI.append(managerFunctionality.getInfo(model.getFile()));
+                    sbI.append(mfunction.getInfo(model.getFile()));
                 }else{
                     sbI.append(getString(R.string.sizeAll));
                     long size = 0;
                     for (int i = 0; i < arr.size(); i++) {
                         if (arr.valueAt(i)) {
                             AbstractFileModel model = (AbstractFileModel) mListView.getItemAtPosition(arr.keyAt(i));
-                            size+=managerFunctionality.getDirectoryLength(model.getFile());
+                            size += mfunction.getDirectoryLength(model.getFile());
                         }
                     }
                     sbI.append(" ");
-                    sbI.append(managerFunctionality.getSizeToString(size));
+                    sbI.append(mfunction.getSizeToString(size));
                 }
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.aboutM)
@@ -252,9 +264,9 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                     alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             String value = input.getText().toString();
-                            if (managerFunctionality.isTrueName(value, model.getFile())) {
+                            if (mfunction.isTrueName(value, model.getFile())) {
 
-                                if (!managerFunctionality.rename(model.getFile(), value)) {
+                                if (!mfunction.rename(model.getFile(), value)) {
                                     Toast.makeText(getActivity(),
                                             R.string.noRename,
                                             Toast.LENGTH_SHORT).show();
@@ -327,6 +339,10 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
 
     public String getCurrentDir(){
         return currentDir;
+    }
+
+    private Boolean isPart(String start, String current) {
+        return current.contains(start);
     }
 
 }
