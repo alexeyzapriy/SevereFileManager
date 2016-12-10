@@ -134,7 +134,7 @@ public class ItemFragment extends Fragment implements AdapterView.OnItemClickLis
                 intent1.setAction(android.content.Intent.ACTION_VIEW);
 
                 String mime = mfunction.getMime(item.getFile());
-                intent1.setDataAndType(Uri.fromFile(item.getFile()), "video/*");
+                intent1.setDataAndType(Uri.fromFile(item.getFile()), mime);
 
                 try {
                     startActivity(intent1);

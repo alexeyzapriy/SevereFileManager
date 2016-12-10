@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.roman.zapriy.severefilemanager.MimeTypeUtils;
 import com.roman.zapriy.severefilemanager.R;
 
 import java.io.File;
@@ -159,7 +160,7 @@ public class ManagerFunctionality {
             }
         } else {
             try {
-                target.renameTo(new File(target.getParent() + "/" + name + "." + getStrMime(target)));
+                target.renameTo(new File(target.getParent() + "/" + name + "." + getFileExtension(target)));
                 return true;
             } catch (Exception e) {
                 return false;
@@ -167,7 +168,7 @@ public class ManagerFunctionality {
         }
     }
 
-    private String getStrMime(File file) {
+    private String getFileExtension(File file) {
         if (file.isDirectory()) return "";
         String ext = "";
 
@@ -182,10 +183,17 @@ public class ManagerFunctionality {
     public String getMime(File file) {
         String type;
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-        type = mime.getMimeTypeFromExtension(getStrMime(file));
+        String fileExtension = getFileExtension(file);
+        type = mime.getMimeTypeFromExtension(fileExtension);
         if (type != null) {
             type.toLowerCase();
             return type;
+        } else {
+            type = MimeTypeUtils.getMimeTypeForExtension(fileExtension);
+            if (type != null) {
+                type.toLowerCase();
+                return type;
+            }
         }
 
         return "application/octet-stream";
